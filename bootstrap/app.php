@@ -8,6 +8,7 @@ use Spatie\Permission\Exceptions\UnauthorizedException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,7 +28,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        
+        $exceptions->render(function (UnauthorizedException $e, Request $request) {
+            return redirect()->route('welcome')
+                ->with('error', 'Aapke paas is page ko dekhne ki permission nahi hai.');
+        });
     })->create();
 
     

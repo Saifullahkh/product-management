@@ -11,39 +11,36 @@
     <div class="sidebar-content">
         @php
             $sidebarUser   = auth()->user();
-            $isEnterprise  = $sidebarUser && $sidebarUser->hasRole('Enterprise User');
-            $isProBusiness = !$isEnterprise && $sidebarUser && $sidebarUser->hasRole('Pro Business User');
-            $isBasic       = !$isEnterprise && !$isProBusiness && $sidebarUser && $sidebarUser->hasRole('Basic User');
+            $isAdmin       = $sidebarUser && $sidebarUser->hasRole('Admin');
+            $isEnterprise  = !$isAdmin && $sidebarUser && $sidebarUser->hasRole('Enterprise User');
+            $isProBusiness = !$isAdmin && !$isEnterprise && $sidebarUser && $sidebarUser->hasRole('Pro Business User');
+            $isBasic       = !$isAdmin && !$isEnterprise && !$isProBusiness && $sidebarUser && $sidebarUser->hasRole('Basic User');
             $isDropdownActive = request()->routeIs('users*') || request()->routeIs('roles-index*');
         @endphp
 
         <div class="text-uppercase text-muted extra-small fw-bold mb-3 px-3" style="font-size: 0.7rem; letter-spacing: 0.05rem;">Main Menu</div>
         <nav class="nav flex-column gap-1">
 
-            {{-- Dashboard: sab plans --}}
             <a href="{{ route('welcome') }}" class="nav-link {{ request()->routeIs('welcome') ? 'active' : '' }}">
                 <i class="bi bi-columns-gap"></i>
                 <span>Dashboard</span>
             </a>
 
-            {{-- Products: Pro Business + Enterprise --}}
-            @if($isProBusiness || $isEnterprise || $isBasic)
+            @canany(['view products', 'create products', 'edit products', 'delete products'])
             <a href="{{ route('products') }}" class="nav-link {{ request()->routeIs('products') ? 'active' : '' }}">
                 <i class="bi bi-bag-plus"></i>
                 <span>Products</span>
             </a>
-            @endif
+            @endcan
 
-            {{-- Categories: Pro Business + Enterprise --}}
-            @if($isProBusiness || $isEnterprise || $isBasic)
+            @can('view categories')
             <a href="{{ route('categories') }}" class="nav-link {{ request()->routeIs('categories') ? 'active' : '' }}">
                 <i class="bi bi-tags"></i>
                 <span>Categories</span>
             </a>
-            @endif
+            @endcan
 
-            {{-- Configuration: sirf Enterprise --}}
-            @if($isEnterprise)
+            @if($isAdmin)
             <div class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle {{ $isDropdownActive ? 'active show' : '' }}" 
                     href="#" id="rolePermissionDropdown" role="button" 
@@ -78,7 +75,9 @@
                 <img src="https://ui-avatars.com/api/?name={{ urlencode($sidebarUser->name) }}&background=4f46e5&color=fff" alt="User" class="rounded-circle" width="32" height="32">
                 <div class="d-flex flex-column align-items-start">
                     <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.875rem; letter-spacing: -0.1px; line-height: 1.2;">{{ $sidebarUser->name }}</h6>
-                    @if($isEnterprise)
+                    @if($isAdmin)
+                        <span class="badge mt-1 fw-semibold" style="font-size: 0.7rem; background-color: #fde8e8; color: #c0392b;">Admin</span>
+                    @elseif($isEnterprise)
                         <span class="badge mt-1 fw-semibold" style="font-size: 0.7rem; background-color: #e2e3e5; color: #1c1f23;">Enterprise</span>
                     @elseif($isProBusiness)
                         <span class="badge mt-1 fw-semibold" style="font-size: 0.7rem; background-color: #e7f1ff; color: #0d6efd;">Pro Business</span>

@@ -15,7 +15,7 @@ class UserController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('role:Enterprise User', only: ['showUser', 'deleteUser', 'update']),
+            new Middleware('role:Admin', only: ['showUser', 'deleteUser', 'update']),
         ];
     }
 
@@ -34,13 +34,13 @@ class UserController extends Controller implements HasMiddleware
     public function addUser(Request $request)
     {
         $data = $request->validate([
-            'name'                  => 'required|string|min:3|max:50',
-            'email'                 => 'required|string|email|unique:users',
-            'password'              => 'required|string|min:6|confirmed',
+            'name' => 'required|string|min:3|max:50',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|min:6|confirmed',
             'password_confirmation' => 'required',
         ], [
             'password.confirmed' => 'The password confirmation does not match!.',
-            'email.unique'       => 'This email is already registered.'
+            'email.unique' => 'This email is already registered.'
         ]);
 
         $user = User::create($data);
@@ -54,10 +54,10 @@ class UserController extends Controller implements HasMiddleware
         $user = User::find($id);
 
         $validator = Validator::make($request->all(), [
-            'name'    => 'required|string|min:3|max:50',
-            'email'   => 'required|string|email',
-            'role'    => 'nullable|array',
-            'role.*'  => 'exists:roles,name',
+            'name' => 'required|string|min:3|max:50',
+            'email' => 'required|string|email',
+            'role' => 'nullable|array',
+            'role.*' => 'exists:roles,name',
         ]);
 
         if ($validator->fails()) {
@@ -87,7 +87,7 @@ class UserController extends Controller implements HasMiddleware
     public function loginUser(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required'
         ]);
 

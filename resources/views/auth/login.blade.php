@@ -75,6 +75,20 @@
             color: #ffffff;
         }
 
+         .btn-social {
+            background-color: #ffffff;
+            border-color: var(--primary-hover);
+            color: #1e293b;
+             padding: 0.625rem;
+            font-weight: 600;
+        }
+
+        .btn-social:hover{
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #ffffff;
+        }
+
         .text-muted-custom {
             color: var(--text-muted);
         }
@@ -122,6 +136,19 @@
                 <button type="submit" class="btn btn-primary-custom w-100 rounded-3 mb-3">
                     Log In
                 </button>
+
+                <!-- OR Divider Line -->
+                <div class="d-flex align-items-center mb-3">
+                    <hr class="flex-grow-1 border-secondary-subtle my-0">
+                    <span class="mx-3 text-secondary small fw-bold">OR</span>
+                    <hr class="flex-grow-1 border-secondary-subtle my-0">
+                </div>
+
+                <!-- Google Sign-In Button -->
+                <a href="" class="btn btn-social w-100 rounded-3 mb-3 d-flex align-items-center justify-content-center gap-2">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKXZFRxjJ3Su_OlLiCYHzVq7p5rKPgBZTnnF1mYIx1BR0dL2sa1_6spdug&s=10" alt="Google Logo" style=" height: 20px;">
+                    <span>Sign in with Google</span>
+                </a>
 
                 <div class="text-center">
                     <p class="small text-muted-custom m-0">Don't have an account? <a href="{{ route('signup') }}"

@@ -2,10 +2,11 @@
     <x-slot name="main">
         @php
             $user = auth()->user();
-            $isEnterprise  = $user && $user->hasRole('Enterprise User');
-            $isProBusiness = !$isEnterprise && $user && $user->hasRole('Pro Business User');
-            $isBasic       = !$isEnterprise && !$isProBusiness && $user && $user->hasRole('Basic User');
-            $hasPlan       = $isBasic || $isProBusiness || $isEnterprise;
+            $isAdmin       = $user && $user->hasRole('Admin');
+            $isEnterprise  = !$isAdmin && $user && $user->hasRole('Enterprise User');
+            $isProBusiness = !$isAdmin && !$isEnterprise && $user && $user->hasRole('Pro Business User');
+            $isBasic       = !$isAdmin && !$isEnterprise && !$isProBusiness && $user && $user->hasRole('Basic User');
+            $hasPlan       = $isAdmin || $isBasic || $isProBusiness || $isEnterprise;
         @endphp
 
         @if($hasPlan)

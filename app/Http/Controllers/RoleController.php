@@ -14,13 +14,13 @@ class RoleController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('role:Enterprise User', only: ['index', 'store', 'update', 'destroy', 'getPermissions']),
+            new Middleware('role:Admin', only: ['index', 'store', 'update', 'destroy', 'getPermissions']),
         ];
     }
 
     public function index()
     {
-        $roles       = Role::get();
+        $roles = Role::get();
         $permissions = Permission::orderBy('name', 'ASC')->get();
         return view('role.create', ['roles' => $roles, 'permissions' => $permissions]);
     }

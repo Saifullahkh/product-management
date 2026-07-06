@@ -2,29 +2,31 @@
     <x-slot name="main">
         @php
             $user = auth()->user();
-            $isEnterprise  = $user && $user->hasRole('Enterprise User');
-            $isProBusiness = !$isEnterprise && $user && $user->hasRole('Pro Business User');
-            $isBasic       = !$isEnterprise && !$isProBusiness && $user && $user->hasRole('Basic User');
-
-            // Pro Business: max 5, Enterprise: sab
+            $isAdmin       = $user && $user->hasRole('Admin');
+            $isEnterprise  = !$isAdmin && $user && $user->hasRole('Enterprise User');
+            $isProBusiness = !$isAdmin && !$isEnterprise && $user && $user->hasRole('Pro Business User');
+            $isBasic       = !$isAdmin && !$isEnterprise && !$isProBusiness && $user && $user->hasRole('Basic User');
             $displayedProducts = $isProBusiness ? $products->take(5) : $products;
         @endphp
 
-        @if($isProBusiness || $isEnterprise)
+        @if($isAdmin || $isProBusiness || $isEnterprise)
 
             <div class="mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <h1 class="h3 fw-bold text-dark mb-1">Product List</h1>
                     </div>
+                    @can('create products')
                     <button class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 rounded-3"
                         data-bs-toggle="modal" data-bs-target="#addProductModal1">
                         <i class="bi bi-plus-lg"></i>
                         <span>Add Product</span>
                     </button>
+                    @endcan
                 </div>
             </div>
-
+            
+            @can('view products')
             <div class="card border-0 mb-4 shadow-sm">
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -63,6 +65,7 @@
                                             </div>
                                         </td>
                                         <td class="border-0 py-3 pe-4">
+                                            @can('edit products')
                                             <a href="{{ route('products-update', $product->id) }}" 
                                                 class="btn btn-sm btn-light border rounded-2 p-1 px-2"
                                                 data-bs-toggle="modal" data-bs-target="#addProductModal1"
@@ -74,11 +77,15 @@
                                                 data-image="{{ asset('storage/uploads/' . $product->image) }}">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
+                                            @endcan
+
+                                            @can('delete products')
                                             <a href="{{ route('products-delete', $product->id) }}" 
                                                 onclick="return confirm('Are you sure to delete this record?')" 
                                                 class="btn btn-sm btn-light border text-danger rounded-2 p-1 px-2 ms-1">
                                                 <i class="bi bi-trash"></i>
                                             </a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach
@@ -105,6 +112,7 @@
                     </div>
                 </div>
             @endif
+            @endcan
 
             {{-- Add/Edit Product Modal --}}
             <div class="modal fade" id="addProductModal1" tabindex="-1" aria-hidden="true">

@@ -2,21 +2,24 @@
     <x-slot name="main">
         @php
             $user = auth()->user();
-            $isEnterprise  = $user && $user->hasRole('Enterprise User');
-            $isProBusiness = !$isEnterprise && $user && $user->hasRole('Pro Business User');
-            $isBasic       = !$isEnterprise && !$isProBusiness && $user && $user->hasRole('Basic User');
+            $isAdmin       = $user && $user->hasRole('Admin');
+            $isEnterprise  = !$isAdmin && $user && $user->hasRole('Enterprise User');
+            $isProBusiness = !$isAdmin && !$isEnterprise && $user && $user->hasRole('Pro Business User');
+            $isBasic       = !$isAdmin && !$isEnterprise && !$isProBusiness && $user && $user->hasRole('Basic User');
         @endphp
 
-        @if($isProBusiness || $isEnterprise)
+        @if($isAdmin || $isProBusiness || $isEnterprise)
 
             <div class="mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <h1 class="h3 fw-bold text-dark mb-1">Category List</h1>
+                    @can('create categories')
                     <button class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 rounded-3"
                         data-bs-toggle="modal" data-bs-target="#addCategoryModal" id="openAddCategoryModalBtn">
                         <i class="bi bi-plus-lg"></i>
                         <span>Add Category</span>
                     </button>
+                    @endcan
                 </div>
             </div>
 
@@ -39,17 +42,22 @@
                                             <p class="mb-0 fw-semibold text-muted small">{{ $category->name }}</p>
                                         </td>
                                         <td class="border-0 py-3 pe-4">
+                                            @can('edit categories')
                                             <a href="#" class="btn btn-sm btn-light border rounded-2 p-1 px-2 edit-category-btn"
                                                 data-bs-toggle="modal" data-bs-target="#addCategoryModal"
                                                 data-id="{{ $category->id }}"
                                                 data-name="{{ $category->name }}">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
+                                            @endcan
+
+                                            @can('delete categories')
                                             <a href="{{ route('categories-delete', $category->id) }}"
                                                 onclick="return confirm('Are you sure to delete this record?')"
                                                 class="btn btn-sm btn-light border text-danger rounded-2 p-1 px-2 ms-1">
                                                 <i class="bi bi-trash"></i>
                                             </a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach

@@ -25,10 +25,11 @@
                                     $isPro = !$isEnt && $user->hasRole('Pro Business User');
                                     $isBas = !$isEnt && !$isPro && $user->hasRole('Basic User');
 
-                                    if ($isEnt)      { $planLabel = 'Enterprise';    $planClass = 'bg-dark bg-opacity-10 text-dark'; }
-                                    elseif ($isPro)  { $planLabel = 'Pro Business';  $planClass = 'bg-primary bg-opacity-10 text-primary'; }
-                                    elseif ($isBas)  { $planLabel = 'Basic';         $planClass = 'bg-info bg-opacity-10 text-info'; }
-                                    else             { $planLabel = 'Free Plan';     $planClass = 'bg-secondary bg-opacity-10 text-secondary'; }
+                                    if ($isEnt){ $planLabel = 'Enterprise';    $planClass = 'bg-dark bg-opacity-10 text-dark'; }
+                                    elseif ($isPro){ $planLabel = 'Pro Business';  $planClass = 'bg-primary bg-opacity-10 text-primary'; }
+                                    elseif ($isBas){ $planLabel = 'Basic';         $planClass = 'bg-info bg-opacity-10 text-info'; }
+                                    elseif ($user->hasRole('Admin')) { $planLabel = 'Admin'; $planClass = 'bg-danger bg-opacity-10 text-danger'; }
+                                    else { $planLabel = 'Free Plan';     $planClass = 'bg-secondary bg-opacity-10 text-secondary'; }
 
                                     $userRole = $user->roles->first()?->name ?? '';
                                 @endphp
@@ -100,6 +101,7 @@
                                     <option value="Basic User">Basic</option>
                                     <option value="Pro Business User">Pro Business</option>
                                     <option value="Enterprise User">Enterprise</option>
+                                    <option value="Admin">Admin</option>
                                 </select>
                             </div>
 

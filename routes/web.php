@@ -27,24 +27,21 @@ Route::middleware('auth')->group(function () {
     Route::get('pricing', [PricingController::class, 'index'])->name('pricing');
     Route::get('checkout/{name}', [CheckoutController::class, 'checkout'])->name('checkout');
 
-    Route::get('product', [ProductController::class, 'getProduct'])->name('products');
-    Route::get('category', [CategoryController::class, 'getCategory'])->name('categories');
-
-    // Pro Business + Enterprise
-    Route::middleware('role:Pro Business User|Enterprise User')->group(function () {
-       
+    // Pro Business + Enterprise + Admin
+    Route::middleware('role:Pro Business User|Enterprise User|Admin')->group(function () {
+        Route::get('product', [ProductController::class, 'getProduct'])->name('products')->middleware('permission:view products|create products');
         Route::post('add-product', [ProductController::class, 'addProduct'])->name('products-store');
         Route::get('deleteProduct/{id}', [ProductController::class, 'deleteProduct'])->name('products-delete');
         Route::put('edit-product/{id}', [ProductController::class, 'updateProduct'])->name('products-update');
 
-       
+        Route::get('category', [CategoryController::class, 'getCategory'])->name('categories')->middleware('permission:view categories');;
         Route::post('add-category', [CategoryController::class, 'addCategory'])->name('categories-store');
         Route::get('delete/{id}', [CategoryController::class, 'deleteCategory'])->name('categories-delete');
         Route::put('edit-category/{id}', [CategoryController::class, 'editCategory'])->name('categories-update');
     });
 
-    // Enterprise only
-    Route::middleware('role:Enterprise User')->group(function () {
+    // Admin only
+    Route::middleware('role:Admin')->group(function () {
         Route::get('permission', [PermissionController::class, 'index'])->name('permissions-index');
         Route::post('permission/store', [PermissionController::class, 'store'])->name('permissions-store');
         Route::put('permission/edit/{id}', [PermissionController::class, 'update'])->name('permissions-edit');
